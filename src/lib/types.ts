@@ -4,3 +4,11 @@ export type User = {
   username: string;
   fullName: string;
 };
+
+export type CreateMessageValues = {
+  channelId: string;
+  workspaceId: string;
+  parentMessageId: string;
+  body: string;
+  image: string | undefined;
+};
