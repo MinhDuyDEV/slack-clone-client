@@ -11,11 +11,10 @@ import Hint from "@/components/hint";
 import { Button } from "@/components/ui/button";
 import InviteModal from "@/components/workspaces/invite-modal";
 import PreferencesModal from "@/components/workspaces/preferences-modal";
-import { Workspace } from "@/lib/seed-data";
 
 interface WorkspaceHeaderProps {
-  workspace: Workspace;
-  isAdmin: boolean;
+  workspace: any;
+  isAdmin?: boolean;
 }
 
 const WorkspaceHeader = ({ workspace, isAdmin }: WorkspaceHeaderProps) => {
@@ -59,7 +58,7 @@ const WorkspaceHeader = ({ workspace, isAdmin }: WorkspaceHeaderProps) => {
                 </p>
               </div>
             </DropdownMenuItem>
-            {isAdmin && (
+            {/* {isAdmin && (
               <>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
@@ -78,7 +77,7 @@ const WorkspaceHeader = ({ workspace, isAdmin }: WorkspaceHeaderProps) => {
                   Preferences
                 </DropdownMenuItem>
               </>
-            )}
+            )} */}
           </DropdownMenuContent>
         </DropdownMenu>
         <div className="flex items-center gap-0.5">

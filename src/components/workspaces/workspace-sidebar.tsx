@@ -14,7 +14,8 @@ import SidebarItem from "@/components/workspaces/sidebar-item";
 import WorkspaceHeader from "@/components/workspaces/workspace-header";
 import WorkspaceSection from "@/components/workspaces/workspace-section";
 
-import { workspaces, channels, members, users } from "@/lib/seed-data";
+import { channels, members, users } from "@/lib/seed-data";
+import { useGetWorkspace } from "@/hooks/workspaces/use-get-workspace";
 
 const WorkspaceSidebar = () => {
   const memberId = useMemberId();
@@ -22,14 +23,20 @@ const WorkspaceSidebar = () => {
   const channelId = useChannelId();
   const [_open, setOpen] = useCreateChannelModal();
 
-  const currentWorkspace = workspaces.find((w) => w.id === workspaceId)!;
-  const currentMember = members.find((m) => m.id === memberId);
+  const { data: workspace, isLoading } = useGetWorkspace({ id: workspaceId });
+
+  console.log("workspace:", workspace);
+
+  if (isLoading) return null;
 
   return (
     <div className="flex flex-col bg-[#5E2C5F] h-full">
       <WorkspaceHeader
-        workspace={currentWorkspace}
-        isAdmin={currentMember?.role === "ADMIN"}
+        workspace={workspace}
+        // isAdmin={
+        //   workspace?.members.find((m: any) => m.id === memberId)?.role ===
+        //   "ADMIN"
+        // }
       />
       <div className="flex flex-col px-2 mt-3">
         <SidebarItem label="Threads" icon={MessageSquareText} id="threads" />
@@ -38,9 +45,13 @@ const WorkspaceSidebar = () => {
       <WorkspaceSection
         label="Channels"
         hint="New channel"
-        onNew={
-          currentMember?.role === "ADMIN" ? () => setOpen(true) : undefined
-        }
+        onNew={() => {}}
+        // onNew={
+        //   workspace?.members.find((m: any) => m.id === memberId)?.role ===
+        //   "ADMIN"
+        //     ? () => setOpen(true)
+        //     : undefined
+        // }
       >
         {channels.map((channel) => (
           <SidebarItem

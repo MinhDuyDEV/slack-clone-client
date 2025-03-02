@@ -3,6 +3,8 @@ export type User = {
   email: string;
   username: string;
   fullName: string;
+  displayName: string;
+  avatar: string | null;
 };
 
 export type CreateMessageValues = {

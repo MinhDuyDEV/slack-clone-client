@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-
+import { getWorkspaceById } from "@/services/workspaces";
 interface UseGetWorkspaceProps {
   id: string;
 }
@@ -7,8 +7,8 @@ interface UseGetWorkspaceProps {
 export const useGetWorkspace = ({ id }: UseGetWorkspaceProps) => {
   const { data, isLoading } = useQuery({
     queryKey: ["workspaces", id],
-    // queryFn: () => getWorkspaceById(id),
+    queryFn: () => getWorkspaceById(id),
   });
 
-  return { data, isLoading };
+  return { data: data?.data, isLoading };
 };

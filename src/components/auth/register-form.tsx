@@ -12,7 +12,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-
+import { signup } from "@/services/auth";
+import { useRouter, useSearchParams } from "next/navigation";
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }).trim(),
   password: z
@@ -45,6 +46,9 @@ const formSchema = z.object({
 });
 
 export default function RegisterForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -55,8 +59,17 @@ export default function RegisterForm() {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      const response = await signup(values);
+
+      if (response.status === 200) {
+        const callbackUrl = searchParams.get("callbackUrl");
+        router.push(callbackUrl || "/");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

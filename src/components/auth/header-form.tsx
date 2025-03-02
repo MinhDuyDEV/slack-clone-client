@@ -8,7 +8,7 @@ export default function HeaderAuthForm({ title }: HeaderAuthFormProps) {
   return (
     <div className="flex flex-col items-center justify-center mb-8">
       <Image
-        src="/slack_logo.svg"
+        src="https://a.slack-edge.com/fd21de4/marketing/img/nav/logo.svg"
         alt="logo"
         width={102}
         height={100}
