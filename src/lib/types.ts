@@ -12,3 +12,8 @@ export type CreateMessageValues = {
   body: string;
   image: string | undefined;
 };
+
+export type EditorValue = {
+  image: File | null;
+  body: string;
+};

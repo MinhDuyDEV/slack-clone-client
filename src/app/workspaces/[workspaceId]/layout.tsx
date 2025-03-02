@@ -8,16 +8,17 @@ import {
 } from "@/components/ui/resizable";
 import Sidebar from "@/components/workspaces/sidebar";
 import HeaderBar from "@/components/workspaces/header-bar";
-import { useThreadPanel } from "@/hooks/use-panel";
+import { usePanel } from "@/hooks/messages/use-panel";
 import { Loader } from "lucide-react";
+import WorkspaceSidebar from "@/components/workspaces/workspace-sidebar";
 
 interface WorkspaceIdLayoutProps {
   children: React.ReactNode;
 }
 
 const WorkspaceIdLayout = ({ children }: WorkspaceIdLayoutProps) => {
-  const { threadMessageId, hideThreadPanel } = useThreadPanel();
-  const isThreadVisible = !!threadMessageId;
+  const { parentMessageId, onOpenMessage, onCloseMessage } = usePanel();
+  const isThreadVisible = !!parentMessageId;
 
   return (
     <div className="h-full">
@@ -33,7 +34,7 @@ const WorkspaceIdLayout = ({ children }: WorkspaceIdLayoutProps) => {
             minSize={11}
             className="bg-[#5E2C5F]"
           >
-            {/* <WorkspaceSidebar /> */}
+            <WorkspaceSidebar />
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel minSize={20}>{children}</ResizablePanel>
@@ -41,10 +42,10 @@ const WorkspaceIdLayout = ({ children }: WorkspaceIdLayoutProps) => {
             <>
               <ResizableHandle withHandle />
               <ResizablePanel minSize={20} defaultSize={29}>
-                {threadMessageId ? (
+                {parentMessageId ? (
                   <MessageThread
-                    messageId={threadMessageId}
-                    onClose={hideThreadPanel}
+                    messageId={parentMessageId}
+                    onClose={onCloseMessage}
                   />
                 ) : (
                   <div className="flex items-center justify-center h-full">
