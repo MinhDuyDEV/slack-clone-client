@@ -1,4 +1,3 @@
-import { toast } from "sonner";
 import { useState } from "react";
 import { TrashIcon } from "lucide-react";
 import { useRouter } from "next/navigation";

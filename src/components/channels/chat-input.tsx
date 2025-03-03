@@ -1,5 +1,5 @@
 import Quill from "quill";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 import dynamic from "next/dynamic";
 import { useRef, useState } from "react";
 

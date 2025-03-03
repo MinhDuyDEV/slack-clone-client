@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createWorkspace } from "@/services/workspaces";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 
 interface CreateWorkspaceModalProps {
   isOpen: boolean;
@@ -36,7 +36,6 @@ export function CreateWorkspaceModal({
     try {
       setIsLoading(true);
       const response = await createWorkspace({ name: workspaceName });
-      console.log("response:", response);
 
       if (response.status === 201) {
         setWorkspaceName("");
@@ -44,7 +43,7 @@ export function CreateWorkspaceModal({
         toast.success("Workspace created successfully");
         router.push(`/workspaces/${response.data.data.id}`);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log("Error creating workspace:", error);
       toast.error("Error creating workspace");
     } finally {

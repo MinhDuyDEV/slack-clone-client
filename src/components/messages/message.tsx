@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 import dynamic from "next/dynamic";
 import { format, isToday, isYesterday } from "date-fns";
 

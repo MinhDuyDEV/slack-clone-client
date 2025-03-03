@@ -1,4 +1,4 @@
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 import { CopyIcon, RefreshCcw } from "lucide-react";
 import {
   Dialog,
