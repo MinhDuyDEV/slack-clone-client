@@ -42,13 +42,11 @@ export function CreateChannelModal({
         sectionId: sectionId,
       });
 
-      if (response.status === 201) {
+      if (response.success === true) {
         setChannelName("");
 
         toast.success("Channel created successfully");
-        router.push(
-          `/workspaces/${workspaceId}/channels/${response.data.data.id}`
-        );
+        router.push(`/workspaces/${workspaceId}/channels/${response.data.id}`);
       }
     } catch (error: any) {
       console.log("Error creating channel:", error);
