@@ -8,14 +8,12 @@ export type User = {
 };
 
 export type CreateMessageValues = {
+  content: string;
   channelId: string;
-  workspaceId: string;
-  parentMessageId: string;
-  body: string;
-  image: string | undefined;
+  parentId?: string;
+  userId: string;
 };
 
 export type EditorValue = {
-  image: File | null;
-  body: string;
+  content: string;
 };

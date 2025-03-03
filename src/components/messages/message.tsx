@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import dynamic from "next/dynamic";
-import { format, isToday, isYesterday } from "date-fns";
+import { format } from "date-fns";
 
 import { cn, formatFullTime } from "@/lib/utils";
 import { usePanel } from "@/hooks/messages/use-panel";
@@ -31,7 +31,7 @@ interface MessageProps {
     value: string;
   }>;
   body: string;
-  image: string | null | undefined;
+  // image: string | null | undefined;
   createdAt: string;
   updatedAt: string;
   edited: any;
@@ -49,7 +49,7 @@ const Message = ({
   id,
   body,
   createdAt,
-  image,
+  // image,
   isAuthor,
   isEditing,
   memberId,
@@ -140,12 +140,12 @@ const Message = ({
     }, 500);
   };
 
-  const handleUpdate = ({ body }: { body: string }) => {
+  const handleUpdate = ({ content }: { content: string }) => {
     setIsPending(true);
 
     // Giả lập API call
     setTimeout(() => {
-      setLocalBody(body);
+      setLocalBody(content);
       setEditingId(null);
       setIsPending(false);
       toast.success("Message updated");
@@ -171,7 +171,7 @@ const Message = ({
   };
 
   const avatarFallback = authorName.charAt(0).toUpperCase();
-  console.log("edited", edited);
+
   if (isCompact)
     return (
       <>
@@ -203,7 +203,7 @@ const Message = ({
             ) : (
               <div className="flex flex-col w-full">
                 <Rerender value={body} />
-                <Thumbnail url={image} />
+                {/* <Thumbnail url={image} /> */}
                 {edited !== null ? (
                   <span className="text-xs text-muted-foreground">
                     (edited)
@@ -279,7 +279,7 @@ const Message = ({
                   </button>
                 </Hint>
               </div>
-              <Thumbnail url={image} />
+              {/* <Thumbnail url={image} /> */}
               <div className="flex items-center gap-1">
                 <Rerender value={body} />
                 {edited !== null ? (

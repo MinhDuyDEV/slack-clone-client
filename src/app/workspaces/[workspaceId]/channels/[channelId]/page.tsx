@@ -7,19 +7,24 @@ import Header from "@/components/channels/header";
 import ChatInput from "@/components/channels/chat-input";
 import { useGetChannel } from "@/hooks/channels/use-get-channel";
 import { useWorkspaceId } from "@/hooks/workspaces/use-workspace-id";
-import { useRouter } from "next/navigation";
 import { useGetMessages } from "@/hooks/messages/use-get-messages";
 import { Message } from "@/interfaces/message.interface";
 
 const ChannelIdPage = () => {
   const channelId = useChannelId();
-  const router = useRouter();
   const workspaceId = useWorkspaceId();
   const { channel } = useGetChannel(workspaceId, channelId);
   const { messages } = useGetMessages({
     channelId,
   });
-  if (!channel) return null;
+
+  if (!channel)
+    return (
+      <div className="h-full flex-1 flex gap-y-2 items-center justify-center">
+        <TriangleAlert className="size-5 text-muted-foreground" />
+        <span className="text-sm text-muted-foreground">Channel not found</span>
+      </div>
+    );
 
   return (
     <div className="flex flex-col h-full">
@@ -28,9 +33,6 @@ const ChannelIdPage = () => {
         channelName={channel.name}
         channelCreationTime={channel.createdAt}
         data={messages as Message[]}
-        loadMore={() => {}}
-        isLoadingMore={false}
-        canLoadMore={false}
       />
       <ChatInput placeholder={`Message # ${channel.name}`} />
     </div>

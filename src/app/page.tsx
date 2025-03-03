@@ -24,15 +24,15 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#5E2C5F] flex flex-col items-center justify-center px-4 py-40">
-      <div className="w-full max-w-3xl flex flex-col">
-        {/* Welcome back header */}
-        <div className="flex items-center gap-2 mb-6">
-          <span className="text-5xl">👋</span>
-          <h2 className="text-white text-5xl font-bold">
-            Welcome back, {me?.displayName}
-          </h2>
-        </div>
+      {/* Welcome back header */}
+      <div className="flex items-center gap-2 mb-6">
+        <span className="text-5xl">👋</span>
+        <h2 className="text-white text-5xl font-bold">
+          Welcome back, {me?.displayName}
+        </h2>
+      </div>
 
+      <div className="w-full max-w-3xl flex flex-col">
         {/* Workspaces section */}
         {isLoading ? (
           <div className="flex items-center justify-center h-full">

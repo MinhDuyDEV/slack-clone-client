@@ -21,7 +21,7 @@ import EmojiPopover from "./emoji-popover";
 import "quill/dist/quill.snow.css";
 
 interface EditorProps {
-  onSubmit: ({ image, body }: EditorValue) => void;
+  onSubmit: ({ content }: EditorValue) => void;
   onCancel?: () => void;
   placeholder?: string;
   defaultValue?: Delta | Op[];
@@ -89,7 +89,7 @@ const Editor = ({
                 if (isEmpty) return;
 
                 const body = JSON.stringify(quill.getContents());
-                submitRef.current({ image: addedImage, body });
+                submitRef.current({ content: body });
               },
             },
             shift_enter: {
@@ -220,8 +220,7 @@ const Editor = ({
                 disabled={disabled || isEmpty}
                 onClick={() => {
                   onSubmit({
-                    image,
-                    body: JSON.stringify(quillRef.current?.getContents()),
+                    content: JSON.stringify(quillRef.current?.getContents()),
                   });
                 }}
                 size="sm"
@@ -240,8 +239,7 @@ const Editor = ({
               disabled={disabled || isEmpty}
               onClick={() => {
                 onSubmit({
-                  image,
-                  body: JSON.stringify(quillRef.current?.getContents()),
+                  content: JSON.stringify(quillRef.current?.getContents()),
                 });
               }}
               size="iconSm"

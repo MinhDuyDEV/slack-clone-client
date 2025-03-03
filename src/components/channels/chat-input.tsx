@@ -5,6 +5,9 @@ import { useRef, useState } from "react";
 
 import { useChannelId } from "@/hooks/channels/use-channel-id";
 import { useWorkspaceId } from "@/hooks/workspaces/use-workspace-id";
+import { createMessage } from "@/services/messages";
+import { CreateMessageValues } from "@/lib/types";
+import { useGetMe } from "@/hooks/auth/use-get-me";
 
 const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
 
@@ -12,55 +15,25 @@ interface ChatInputProps {
   placeholder?: string;
 }
 
-type CreateMessageValues = {
-  channelId: string;
-  workspaceId: string;
-  body: string;
-  image: string | undefined;
-};
-
 const ChatInput = ({ placeholder }: ChatInputProps) => {
   const [editorKey, setEditorKey] = useState<number>(0);
   const [isPending, setIsPending] = useState<boolean>(false);
-
+  const { me } = useGetMe();
   const channelId = useChannelId();
-  const workspaceId = useWorkspaceId();
   const editorRef = useRef<Quill | null>(null);
 
-  const handleSubmit = async ({
-    body,
-    image,
-  }: {
-    body: string;
-    image: File | null;
-  }) => {
+  const handleSubmit = async ({ content }: { content: string }) => {
     try {
       setIsPending(true);
       editorRef?.current?.enable(false);
 
       const values: CreateMessageValues = {
         channelId,
-        workspaceId,
-        body,
-        image: undefined,
+        content,
+        userId: me.id,
       };
-      if (image) {
-        // const url = await generateUploadUrl({}, { throwError: true });
-        const url = "https://api.cloudinary.com/v1_1/dqzqzqzq/image/upload";
-        if (!url) throw new Error("Failed to generate upload url");
 
-        const result = await fetch(url, {
-          method: "POST",
-          headers: { "Content-Type": image.type },
-          body: image,
-        });
-        if (!result.ok) throw new Error("Failed to upload image");
-
-        const { storageId } = await result.json();
-        values.image = storageId;
-      }
-
-      // await createMessage(values, { throwError: true });
+      const message = await createMessage(values);
 
       setEditorKey((prev) => prev + 1);
     } catch {

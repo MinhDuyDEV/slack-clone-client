@@ -16,7 +16,6 @@ import ChannelHero from "@/components/channel-hero";
 import ConversationHero from "@/components/conversation-hero";
 import { TIME_THRESHOLD } from "@/lib/constants";
 import { formatDateLabel } from "@/lib/utils";
-import { useChannelId } from "@/hooks/channels/use-channel-id";
 import Message from "./message";
 import { useGetMe } from "@/hooks/auth/use-get-me";
 import { Message as MessageType } from "@/interfaces/message.interface";
@@ -28,18 +27,13 @@ interface MessageListProps {
   channelCreationTime?: string;
   variant?: "channel" | "thread" | "conversation";
   data: MessageType[];
-  loadMore: () => void;
-  isLoadingMore: boolean;
-  canLoadMore: boolean;
+  // loadMore: () => void;
+  // isLoadingMore: boolean;
+  // canLoadMore: boolean;
 }
 
 const MessageList = ({
-  // canLoadMore,
   data: messages,
-  // isLoadingMore,
-  // loadMore,
-  // channelCreationTime,
-  // channelName,
   memberImage,
   memberName,
   variant = "channel",
@@ -47,7 +41,6 @@ const MessageList = ({
   channelCreationTime,
 }: MessageListProps) => {
   const workspaceId = useWorkspaceId();
-  const channelId = useChannelId();
   const [editingId, setEditingId] = useState<string | null>(null);
 
   // Giả lập loading states
@@ -115,6 +108,7 @@ const MessageList = ({
                   new Date(message.createdAt),
                   new Date(prevMessage.createdAt)
                 ) < TIME_THRESHOLD;
+
               return (
                 <Message
                   key={message.id}
@@ -126,7 +120,7 @@ const MessageList = ({
                   reactions={[]}
                   edited={message.edited}
                   body={message.content}
-                  image={null}
+                  // image={null}
                   updatedAt={message.updatedAt}
                   createdAt={message.createdAt}
                   isEditing={editingId === message.id}
