@@ -11,6 +11,7 @@ import Link from "next/link";
 import { useGetMe } from "@/hooks/auth/use-get-me";
 import { Loader } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { Workspace } from "@/interfaces/workspace.interface";
 
 export default function Home() {
   const { me } = useGetMe();
@@ -19,6 +20,7 @@ export default function Home() {
   const router = useRouter();
 
   if (!me) return null;
+  if (!workspaces) return null;
 
   return (
     <div className="min-h-screen bg-[#5E2C5F] flex flex-col items-center justify-center px-4 py-40">
@@ -43,7 +45,7 @@ export default function Home() {
                 Workspaces for {me?.email}
               </h2>
             </div>
-            {workspaces.map((workspace: any) => (
+            {workspaces?.map((workspace: Workspace) => (
               <div
                 key={workspace.id}
                 className="bg-purple-50 overflow-hidden border-t"

@@ -12,20 +12,22 @@ import {
   getThreadName,
 } from "@/lib/seed-data";
 
-import Message from "@/components/messages/message";
 import ChannelHero from "@/components/channel-hero";
 import ConversationHero from "@/components/conversation-hero";
 import { TIME_THRESHOLD } from "@/lib/constants";
 import { formatDateLabel } from "@/lib/utils";
 import { useChannelId } from "@/hooks/channels/use-channel-id";
+import Message from "./message";
+import { useGetMe } from "@/hooks/auth/use-get-me";
+import { Message as MessageType } from "@/interfaces/message.interface";
 
 interface MessageListProps {
   memberName?: string;
   memberImage?: string;
   channelName?: string;
-  channelCreationTime?: number;
+  channelCreationTime?: string;
   variant?: "channel" | "thread" | "conversation";
-  // data: GetMessagesReturnType | undefined;
+  data: MessageType[];
   loadMore: () => void;
   isLoadingMore: boolean;
   canLoadMore: boolean;
@@ -33,7 +35,7 @@ interface MessageListProps {
 
 const MessageList = ({
   // canLoadMore,
-  // data,
+  data: messages,
   // isLoadingMore,
   // loadMore,
   // channelCreationTime,
@@ -53,30 +55,12 @@ const MessageList = ({
   const [canLoadMore, setCanLoadMore] = useState(true);
   const [page, setPage] = useState(1);
 
-  // Giả sử user hiện tại là user-1
-  const currentUserId = "user-1";
-  const currentMember = members.find(
-    (m) => m.workspaceId === workspaceId && m.userId === currentUserId
-  );
-
-  // Lọc tin nhắn theo kênh hiện tại
-  const filteredMessages = messages
-    .filter((message) => {
-      if (variant === "channel") {
-        return message.channelId === channelId && !message.parentMessageId;
-      } else if (variant === "thread" && channelId) {
-        return message.parentMessageId === channelId;
-      } else if (variant === "conversation") {
-        // Giả sử conversation là giữa currentUser và memberName
-        return false; // Implement logic cho conversation nếu cần
-      }
-      return false;
-    })
-    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()); // Sắp xếp theo thời gian giảm dần
+  const { me } = useGetMe();
+  if (!me) return null;
 
   // Phân trang tin nhắn
   const messagesPerPage = 20;
-  const paginatedMessages = filteredMessages.slice(0, page * messagesPerPage);
+  const paginatedMessages = messages.slice(0, page * messagesPerPage);
 
   // Hàm load thêm tin nhắn
   const loadMore = () => {
@@ -90,22 +74,25 @@ const MessageList = ({
       setIsLoadingMore(false);
 
       // Kiểm tra xem còn tin nhắn để load không
-      if (page * messagesPerPage >= filteredMessages.length) {
+      if (page * messagesPerPage >= messages.length) {
         setCanLoadMore(false);
       }
     }, 1000);
   };
 
   // Nhóm tin nhắn theo ngày
-  const groupedMessages = paginatedMessages.reduce((groups, message) => {
-    const date = message.createdAt;
-    const dateKey = format(date, "yyyy-MM-dd");
-    if (!groups[dateKey]) {
-      groups[dateKey] = [];
-    }
-    groups[dateKey].push(message);
-    return groups;
-  }, {} as Record<string, typeof paginatedMessages>);
+  const groupedMessages = paginatedMessages.reduce(
+    (groups: any, message: MessageType) => {
+      const date = message.createdAt;
+      const dateKey = format(date, "yyyy-MM-dd");
+      if (!groups[dateKey]) {
+        groups[dateKey] = [];
+      }
+      groups[dateKey].push(message);
+      return groups;
+    },
+    {} as Record<string, typeof paginatedMessages>
+  );
 
   return (
     <div className="flex-1 flex flex-col-reverse pb-4 overflow-y-auto messages-scrollbar">
@@ -117,40 +104,43 @@ const MessageList = ({
               {formatDateLabel(dateKey)}
             </span>
           </div>
-          {messages.map((message, index) => {
-            if (!message) return null;
-            const prevMessage = messages[index - 1];
-            const isCompact =
-              prevMessage &&
-              message?.senderId === prevMessage.senderId &&
-              differenceInMinutes(
-                new Date(message.createdAt),
-                new Date(prevMessage.createdAt)
-              ) < TIME_THRESHOLD;
-            return (
-              <Message
-                key={message.id}
-                id={message.id}
-                memberId={message.senderId}
-                authorImage={message.senderId}
-                authorName={message.senderId}
-                isAuthor={message.senderId === currentUserId}
-                reactions={[]}
-                body={message.body}
-                image={message.senderId}
-                updatedAt={message.updatedAt.getTime()}
-                createdAt={message.createdAt.getTime()}
-                isEditing={editingId === message.id}
-                setEditingId={setEditingId}
-                isCompact={isCompact ?? undefined}
-                hideThreadButton={variant === "thread"}
-                threadCount={getThreadCount(message.id)}
-                threadImage={getThreadImage(message.id)}
-                threadName={getThreadName(message.id)}
-                threadTimestamp={message.createdAt.getTime()}
-              />
-            );
-          })}
+          {(messages as MessageType[]).map(
+            (message: MessageType, index: number) => {
+              if (!message) return null;
+              const prevMessage = (messages as MessageType[])[index - 1];
+              const isCompact =
+                prevMessage &&
+                message.userId === prevMessage.userId &&
+                differenceInMinutes(
+                  new Date(message.createdAt),
+                  new Date(prevMessage.createdAt)
+                ) < TIME_THRESHOLD;
+              return (
+                <Message
+                  key={message.id}
+                  id={message.id}
+                  memberId={message.userId}
+                  authorImage={message.userId}
+                  authorName={message.user.displayName}
+                  isAuthor={message.userId === me.id}
+                  reactions={[]}
+                  edited={message.edited}
+                  body={message.content}
+                  image={null}
+                  updatedAt={message.updatedAt}
+                  createdAt={message.createdAt}
+                  isEditing={editingId === message.id}
+                  setEditingId={setEditingId}
+                  isCompact={isCompact ?? undefined}
+                  hideThreadButton={variant === "thread"}
+                  threadCount={getThreadCount(message.id)}
+                  threadImage={getThreadImage(message.id)}
+                  threadName={getThreadName(message.id)}
+                  threadTimestamp={message.createdAt}
+                />
+              );
+            }
+          )}
         </div>
       ))}
       <div

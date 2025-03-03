@@ -32,7 +32,6 @@ const Header = ({ title }: HeaderProps) => {
     "Delete this channel?",
     "you are about to delete this channel. This action is irreversible"
   );
-
   const member = members.find((m) => m.workspaceId === workspaceId);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

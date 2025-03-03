@@ -8,7 +8,6 @@ export const useGetChannel = (workspaceId: string, channelId: string) => {
     enabled: !!channelId,
     staleTime: Infinity,
   });
-  console.log("data", data);
 
-  return { channel: data, isLoading };
+  return { channel: data?.data, isLoading };
 };

@@ -14,10 +14,11 @@ import SidebarItem from "@/components/workspaces/sidebar-item";
 import WorkspaceHeader from "@/components/workspaces/workspace-header";
 import WorkspaceSection from "@/components/workspaces/workspace-section";
 
-import { members, users } from "@/lib/seed-data";
 import { useGetWorkspace } from "@/hooks/workspaces/use-get-workspace";
 import { useGetChannels } from "@/hooks/channels/use-get-channels";
 import { CreateChannelModal } from "@/components/channels/create-channel-modal";
+import { Section } from "@/interfaces/section.interface";
+import { Channel } from "@/interfaces/channel.interface";
 
 const WorkspaceSidebar = () => {
   const memberId = useMemberId();
@@ -26,16 +27,21 @@ const WorkspaceSidebar = () => {
   const [isCreateChannelModalOpen, setIsCreateChannelModalOpen] =
     useState(false);
 
-  const { data: workspace, isLoading: workspaceLoading } = useGetWorkspace({
+  const { data: workspace } = useGetWorkspace({
     id: workspaceId,
   });
-  const { channels, isLoading: channelsLoading } = useGetChannels({
-    workspaceId,
-  });
+  if (!workspace) {
+    return null;
+  }
+
+  const isActive = (id: string) => {
+    if (id === channelId) return "active";
+    return "default";
+  };
 
   return (
     <div className="flex flex-col bg-[#5E2C5F] h-full">
-      {workspaceLoading ? (
+      {!workspace ? (
         <Loader className="size-4 animate-spin" />
       ) : (
         <WorkspaceHeader workspace={workspace} />
@@ -46,47 +52,46 @@ const WorkspaceSidebar = () => {
         <SidebarItem label="Drafts & Sent" icon={SendHorizonal} id="drafts" />
       </div>
 
-      <WorkspaceSection
-        label="Channels"
-        hint="New channel"
-        onNew={() => setIsCreateChannelModalOpen(true)}
-      >
-        {channelsLoading ? (
-          <Loader className="size-4 animate-spin self-center" />
-        ) : (
-          channels?.map((channel: any) => (
-            <SidebarItem
-              key={channel.id}
-              icon={HashIcon}
-              label={channel.name}
-              id={channel.id}
-              variant={channelId === channel.id ? "active" : "default"}
-            />
-          ))
-        )}
-      </WorkspaceSection>
+      {workspace.sections.map((section: Section) => {
+        return (
+          <WorkspaceSection
+            key={section.id}
+            label={section.name}
+            hint="New section"
+            onNew={() => {}}
+          >
+            {section.channels.map((channel: Channel) => {
+              if (channel.type === "direct") {
+                return (
+                  <UserItem
+                    key={channel.id}
+                    id={channel.id}
+                    image={channel.userId}
+                    label={channel.name}
+                    variant={isActive(channel.id)}
+                  />
+                );
+              } else {
+                return (
+                  <SidebarItem
+                    key={channel.id}
+                    label={channel.name}
+                    icon={HashIcon}
+                    id={channel.id}
+                    variant={isActive(channel.id)}
+                  />
+                );
+              }
+            })}
+          </WorkspaceSection>
+        );
+      })}
 
-      <WorkspaceSection
-        label="Direct messages"
-        hint="New direct message"
-        onNew={() => {}}
-      >
-        {members.map((member) => (
-          <UserItem
-            key={member.id}
-            id={member.id}
-            image={users.find((u) => u.id === member.userId)?.imageUrl}
-            label={users.find((u) => u.id === member.userId)?.username}
-            variant={memberId === member.id ? "active" : "default"}
-          />
-        ))}
-      </WorkspaceSection>
-
-      <CreateChannelModal
+      {/* <CreateChannelModal
         isOpen={isCreateChannelModalOpen}
         onClose={() => setIsCreateChannelModalOpen(false)}
-        sectionId={channels?.[0].sectionId}
-      />
+        sectionId={}
+      /> */}
     </div>
   );
 };

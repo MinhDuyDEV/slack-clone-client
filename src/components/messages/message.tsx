@@ -32,8 +32,9 @@ interface MessageProps {
   }>;
   body: string;
   image: string | null | undefined;
-  createdAt: number;
-  updatedAt: number;
+  createdAt: string;
+  updatedAt: string;
+  edited: any;
   isEditing: boolean;
   setEditingId: (id: string | null) => void;
   isCompact?: boolean;
@@ -41,7 +42,7 @@ interface MessageProps {
   threadCount?: number;
   threadImage?: string;
   threadName?: string;
-  threadTimestamp?: number;
+  threadTimestamp?: string;
 }
 
 const Message = ({
@@ -59,6 +60,7 @@ const Message = ({
   hideThreadButton,
   isCompact,
   reactions,
+  edited,
   threadCount,
   threadImage,
   threadName,
@@ -169,7 +171,7 @@ const Message = ({
   };
 
   const avatarFallback = authorName.charAt(0).toUpperCase();
-
+  console.log("edited", edited);
   if (isCompact)
     return (
       <>
@@ -202,7 +204,7 @@ const Message = ({
               <div className="flex flex-col w-full">
                 <Rerender value={body} />
                 <Thumbnail url={image} />
-                {updatedAt ? (
+                {edited !== null ? (
                   <span className="text-xs text-muted-foreground">
                     (edited)
                   </span>
@@ -277,11 +279,15 @@ const Message = ({
                   </button>
                 </Hint>
               </div>
-              <Rerender value={body} />
               <Thumbnail url={image} />
-              {updatedAt ? (
-                <span className="text-xs text-muted-foreground">(edited)</span>
-              ) : null}
+              <div className="flex items-center gap-1">
+                <Rerender value={body} />
+                {edited !== null ? (
+                  <span className="text-xs text-muted-foreground">
+                    (edited)
+                  </span>
+                ) : null}
+              </div>
               <Reactions data={reactions || []} onChange={handleReaction} />
               <ThreadBar
                 count={threadCount}

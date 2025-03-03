@@ -13,6 +13,7 @@ import { useGetWorkspace } from "@/hooks/workspaces/use-get-workspace";
 import { useGetWorkspaces } from "@/hooks/workspaces/use-get-workspaces";
 import { CreateWorkspaceModal } from "@/components/workspaces/create-workspace-modal";
 import { useState } from "react";
+import { Workspace } from "@/interfaces/workspace.interface";
 
 const WorkspaceSwitcher = () => {
   const [open, setOpen] = useState(false);
@@ -24,7 +25,7 @@ const WorkspaceSwitcher = () => {
   });
 
   const filteredWorkspaces = workspaces?.filter(
-    (workspace: any) => workspace.id !== workspaceId
+    (workspace: Workspace) => workspace.id !== workspaceId
   );
 
   return (
@@ -48,7 +49,7 @@ const WorkspaceSwitcher = () => {
             Active workspace
           </span>
         </DropdownMenuItem>
-        {filteredWorkspaces?.map((workspace: any) => (
+        {filteredWorkspaces?.map((workspace: Workspace) => (
           <DropdownMenuItem
             key={workspace.id}
             onClick={() => router.push(`/workspaces/${workspace.id}`)}

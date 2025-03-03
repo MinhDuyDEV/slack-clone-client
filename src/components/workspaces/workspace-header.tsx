@@ -11,9 +11,10 @@ import Hint from "@/components/hint";
 import { Button } from "@/components/ui/button";
 import InviteModal from "@/components/workspaces/invite-modal";
 import PreferencesModal from "@/components/workspaces/preferences-modal";
+import { Workspace } from "@/interfaces/workspace.interface";
 
 interface WorkspaceHeaderProps {
-  workspace: any;
+  workspace: Workspace;
 }
 
 const WorkspaceHeader = ({ workspace }: WorkspaceHeaderProps) => {
@@ -22,12 +23,12 @@ const WorkspaceHeader = ({ workspace }: WorkspaceHeaderProps) => {
 
   return (
     <>
-      <InviteModal
+      {/* <InviteModal
         open={inviteOpen}
         setOpen={setInviteOpen}
         name={workspace.name}
         joinCode={workspace.joinCode}
-      />
+      /> */}
       <PreferencesModal
         open={preferencesOpen}
         setOpen={setPreferencesOpen}

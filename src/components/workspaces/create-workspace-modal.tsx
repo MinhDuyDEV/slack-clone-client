@@ -37,11 +37,11 @@ export function CreateWorkspaceModal({
       setIsLoading(true);
       const response = await createWorkspace({ name: workspaceName });
 
-      if (response.status === 201) {
+      if (response.success === true) {
         setWorkspaceName("");
 
         toast.success("Workspace created successfully");
-        router.push(`/workspaces/${response.data.data.id}`);
+        router.push(`/workspaces/${response.data.id}`);
       }
     } catch (error: any) {
       console.log("Error creating workspace:", error);
