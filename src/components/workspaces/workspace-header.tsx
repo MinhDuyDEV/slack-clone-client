@@ -14,10 +14,9 @@ import PreferencesModal from "@/components/workspaces/preferences-modal";
 
 interface WorkspaceHeaderProps {
   workspace: any;
-  isAdmin?: boolean;
 }
 
-const WorkspaceHeader = ({ workspace, isAdmin }: WorkspaceHeaderProps) => {
+const WorkspaceHeader = ({ workspace }: WorkspaceHeaderProps) => {
   const [preferencesOpen, setPreferencesOpen] = useState<boolean>(false);
   const [inviteOpen, setInviteOpen] = useState<boolean>(false);
 
@@ -58,40 +57,31 @@ const WorkspaceHeader = ({ workspace, isAdmin }: WorkspaceHeaderProps) => {
                 </p>
               </div>
             </DropdownMenuItem>
-            {/* {isAdmin && (
-              <>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  className="cursor-pointer py-2"
-                  onClick={() => setInviteOpen(true)}
-                >
-                  <p className="truncate">
-                    Invite people to{" "}
-                    <span className="text-[#5E2C5F]">{workspace.name}</span>
-                  </p>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="cursor-pointer py-2"
-                  onClick={() => setPreferencesOpen(true)}
-                >
-                  Preferences
-                </DropdownMenuItem>
-              </>
-            )} */}
+
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="cursor-pointer py-2"
+              onClick={() => setInviteOpen(true)}
+            >
+              <p className="truncate">
+                Invite people to{" "}
+                <span className="text-[#5E2C5F]">{workspace.name}</span>
+              </p>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="cursor-pointer py-2"
+              onClick={() => setPreferencesOpen(true)}
+            >
+              Preferences
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        <div className="flex items-center gap-0.5">
-          <Hint label="Filter conversations" side="bottom">
-            <Button variant="transparent" size="iconSm">
-              <ListFilter className="size-4" />
-            </Button>
-          </Hint>
-          <Hint label="New message" side="bottom">
-            <Button variant="transparent" size="iconSm">
-              <SquarePen className="size-4" />
-            </Button>
-          </Hint>
-        </div>
+
+        <Hint label="New message" side="bottom">
+          <Button variant="transparent" size="iconSm">
+            <SquarePen className="size-4" />
+          </Button>
+        </Hint>
       </div>
     </>
   );

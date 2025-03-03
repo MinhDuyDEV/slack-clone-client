@@ -6,8 +6,10 @@ interface UseGetWorkspaceProps {
 
 export const useGetWorkspace = ({ id }: UseGetWorkspaceProps) => {
   const { data, isLoading } = useQuery({
-    queryKey: ["workspaces", id],
+    queryKey: ["workspaceId", id],
     queryFn: () => getWorkspaceById(id),
+    enabled: !!id,
+    staleTime: Infinity,
   });
 
   return { data: data?.data, isLoading };

@@ -10,6 +10,7 @@ interface WorkspaceSectionProps {
   label: string;
   hint: string;
   onNew?: () => void;
+  sectionId?: string;
 }
 
 const WorkspaceSection = ({

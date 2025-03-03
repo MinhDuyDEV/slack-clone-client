@@ -1,12 +1,7 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useWorkspaceId } from "@/hooks/workspaces/use-workspace-id";
-import { useCreateChannelModal } from "@/store/use-create-channel-modal";
-import { members } from "@/lib/seed-data";
-import { workspaces } from "@/lib/seed-data";
-import { getWorkspaceChannels } from "@/lib/seed-data";
 import { AlertTriangle, Loader } from "lucide-react";
 import { useGetWorkspace } from "@/hooks/workspaces/use-get-workspace";
 
@@ -14,7 +9,6 @@ const WorkspaceIdPage = () => {
   const router = useRouter();
   const workspaceId = useWorkspaceId();
   const { data: workspace, isLoading } = useGetWorkspace({ id: workspaceId });
-  const [open, setOpen] = useCreateChannelModal();
 
   if (isLoading)
     return (
