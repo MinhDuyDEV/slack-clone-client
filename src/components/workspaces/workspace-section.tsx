@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useToggle } from "react-use";
 import { FaCaretDown } from "react-icons/fa";
 import { cn } from "@/lib/utils";
@@ -14,15 +15,25 @@ import {
   ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
+import { CreateChannelModal } from "@/components/channels/create-channel-modal";
+import { CreateSectionModal } from "@/components/sections/create-section-modal";
 
 interface WorkspaceSectionProps {
   children: React.ReactNode;
   label: string;
-  sectionId?: string;
+  sectionId: string;
 }
 
-const WorkspaceSection = ({ label, children }: WorkspaceSectionProps) => {
+const WorkspaceSection = ({
+  label,
+  children,
+  sectionId,
+}: WorkspaceSectionProps) => {
   const [on, toggle] = useToggle(true);
+  const [isCreateChannelModalOpen, setIsCreateChannelModalOpen] =
+    useState(false);
+  const [isCreateSectionModalOpen, setIsCreateSectionModalOpen] =
+    useState(false);
 
   return (
     <div className="flex flex-col mt-3 px-2">
@@ -50,11 +61,24 @@ const WorkspaceSection = ({ label, children }: WorkspaceSectionProps) => {
             <ContextMenuSub>
               <ContextMenuSubTrigger inset>Create</ContextMenuSubTrigger>
               <ContextMenuSubContent className="w-64">
-                <ContextMenuItem>Create channel</ContextMenuItem>
-                <ContextMenuItem>Create section</ContextMenuItem>
+                <ContextMenuItem
+                  onClick={() => {
+                    setIsCreateChannelModalOpen(true);
+                  }}
+                >
+                  Create channel
+                </ContextMenuItem>
+                <ContextMenuItem
+                  onClick={() => {
+                    setIsCreateSectionModalOpen(true);
+                  }}
+                >
+                  Create section
+                </ContextMenuItem>
               </ContextMenuSubContent>
             </ContextMenuSub>
             <ContextMenuSeparator />
+
             <ContextMenuSub>
               <ContextMenuSubTrigger inset>Manage</ContextMenuSubTrigger>
               <ContextMenuSubContent className="w-64">
@@ -67,6 +91,7 @@ const WorkspaceSection = ({ label, children }: WorkspaceSectionProps) => {
               </ContextMenuSubContent>
             </ContextMenuSub>
             <ContextMenuSeparator />
+
             <ContextMenuSub>
               <ContextMenuSubTrigger inset>Show and sort</ContextMenuSubTrigger>
               <ContextMenuSubContent className="w-64">
@@ -101,6 +126,16 @@ const WorkspaceSection = ({ label, children }: WorkspaceSectionProps) => {
         </ContextMenu>
       </div>
       {on && children}
+
+      <CreateChannelModal
+        isOpen={isCreateChannelModalOpen}
+        onClose={() => setIsCreateChannelModalOpen(false)}
+        sectionId={sectionId}
+      />
+      <CreateSectionModal
+        isOpen={isCreateSectionModalOpen}
+        onClose={() => setIsCreateSectionModalOpen(false)}
+      />
     </div>
   );
 };
