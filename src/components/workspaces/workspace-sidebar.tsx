@@ -3,6 +3,7 @@ import {
   AlertTriangle,
   HashIcon,
   Loader,
+  LockIcon,
   MessageSquareText,
   SendHorizonal,
 } from "lucide-react";
@@ -57,8 +58,7 @@ const WorkspaceSidebar = () => {
           <WorkspaceSection
             key={section.id}
             label={section.name}
-            hint="New section"
-            onNew={() => {}}
+            sectionId={section.id}
           >
             {section.channels.map((channel: Channel) => {
               if (channel.type === "direct") {
@@ -76,7 +76,7 @@ const WorkspaceSidebar = () => {
                   <SidebarItem
                     key={channel.id}
                     label={channel.name}
-                    icon={HashIcon}
+                    icon={channel.type === "public" ? HashIcon : LockIcon}
                     id={channel.id}
                     variant={isActive(channel.id)}
                   />

@@ -8,8 +8,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { handleLogout } from "@/services/auth";
+import { useRouter } from "next/navigation";
 
 const UserButton = () => {
+  const router = useRouter();
+
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger className="outline-none relative">
@@ -19,7 +23,10 @@ const UserButton = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="center" side="right" className="w-60">
         <DropdownMenuItem
-          // onClick={() => signOut()}
+          onClick={() => {
+            handleLogout();
+            router.push("/login");
+          }}
           className="h-10"
         >
           <LogOut className="size-4 mr-2" />
