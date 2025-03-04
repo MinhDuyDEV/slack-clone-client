@@ -50,7 +50,7 @@ const MessageList = ({
       if (!groups[dateKey]) {
         groups[dateKey] = [];
       }
-      groups[dateKey].unshift(message);
+      groups[dateKey].push(message);
       return groups;
     },
     {} as Record<string, MessageType[]>
@@ -58,51 +58,56 @@ const MessageList = ({
 
   return (
     <div className="flex-1 flex flex-col-reverse pb-4 overflow-y-auto messages-scrollbar">
-      {Object.entries(groupedMessages || {}).map(([dateKey, messages]) => (
-        <div key={dateKey}>
-          <div className="text-center my-2 relative">
-            <hr className="absolute top-1/2 left-0 right-0 border-t border-gray-300" />
-            <span className="relative inline-block bg-white px-4 py-1 rounded-full text-xs border border-gray-300 shadow-sm">
-              {formatDateLabel(dateKey)}
-            </span>
-          </div>
-          {(messages as MessageType[]).map(
-            (message: MessageType, index: number) => {
-              if (!message) return null;
-              const prevMessage = (messages as MessageType[])[index - 1];
-              const isCompact =
-                prevMessage &&
-                message.userId === prevMessage.userId &&
-                differenceInMinutes(
-                  new Date(message.createdAt),
-                  new Date(prevMessage.createdAt)
-                ) < TIME_THRESHOLD;
+      {Object.entries(groupedMessages || {})
+        .sort(
+          ([dateA], [dateB]) =>
+            new Date(dateB).getTime() - new Date(dateA).getTime()
+        )
+        .map(([dateKey, messages]) => (
+          <div key={dateKey}>
+            <div className="text-center my-2 relative">
+              <hr className="absolute top-1/2 left-0 right-0 border-t border-gray-300" />
+              <span className="relative inline-block bg-white px-4 py-1 rounded-full text-xs border border-gray-300 shadow-sm">
+                {formatDateLabel(dateKey)}
+              </span>
+            </div>
+            {(messages as MessageType[]).map(
+              (message: MessageType, index: number) => {
+                if (!message) return null;
+                const prevMessage = (messages as MessageType[])[index - 1];
+                const isCompact =
+                  prevMessage &&
+                  message.userId === prevMessage.userId &&
+                  differenceInMinutes(
+                    new Date(message.createdAt),
+                    new Date(prevMessage.createdAt)
+                  ) < TIME_THRESHOLD;
 
-              return (
-                <Message
-                  key={message.id}
-                  id={message.id}
-                  authorImage={message.user.avatar ?? undefined}
-                  authorName={message.user.displayName}
-                  isAuthor={message.userId === me.id}
-                  edited={message.edited}
-                  body={message.content}
-                  updatedAt={message.updatedAt}
-                  createdAt={message.createdAt}
-                  isEditing={editingId === message.id}
-                  setEditingId={setEditingId}
-                  isCompact={isCompact ?? undefined}
-                  hideThreadButton={variant === "thread"}
-                  threadCount={message.threadMessagesCount}
-                  threadImage={message.user.avatar ?? undefined}
-                  threadName={message.user.displayName}
-                  threadTimestamp={message.createdAt}
-                />
-              );
-            }
-          )}
-        </div>
-      ))}
+                return (
+                  <Message
+                    key={message.id}
+                    id={message.id}
+                    authorImage={message.user.avatar ?? undefined}
+                    authorName={message.user.displayName}
+                    isAuthor={message.userId === me.id}
+                    edited={message.edited}
+                    body={message.content}
+                    updatedAt={message.updatedAt}
+                    createdAt={message.createdAt}
+                    isEditing={editingId === message.id}
+                    setEditingId={setEditingId}
+                    isCompact={isCompact ?? undefined}
+                    hideThreadButton={variant === "thread"}
+                    threadCount={message.threadMessagesCount}
+                    threadImage={message.user.avatar ?? undefined}
+                    threadName={message.user.displayName}
+                    threadTimestamp={message.createdAt}
+                  />
+                );
+              }
+            )}
+          </div>
+        ))}
 
       {variant === "channel" && channelName && channelCreationTime && (
         <ChannelHero
