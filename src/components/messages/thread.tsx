@@ -49,7 +49,7 @@ const Thread = ({ messageId, onClose }: ThreadProps) => {
       groups[dateKey] = [];
     }
 
-    groups[dateKey].unshift(message);
+    groups[dateKey].push(message);
     return groups;
   }, {} as Record<string, typeof replies.data>);
 
