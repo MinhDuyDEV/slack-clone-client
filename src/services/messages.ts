@@ -31,3 +31,23 @@ export const createMessage = async (
   );
   return response.data;
 };
+
+export const replyToThread = async (
+  values: CreateMessageValues
+): Promise<Response<Message>> => {
+  const response = await axiosInstance.post(
+    `http://localhost:8000/api/channels/${values.channelId}/messages/${values.parentId}/thread`,
+    values
+  );
+  return response.data;
+};
+
+export const getThreadReplies = async (
+  channelId: string,
+  messageId: string
+): Promise<Response<Message[]>> => {
+  const response = await axiosInstance.get(
+    `http://localhost:8000/api/channels/${channelId}/messages/${messageId}/thread`
+  );
+  return response.data;
+};

@@ -4,16 +4,17 @@ import { useState, useRef } from "react";
 import Quill from "quill";
 import { differenceInMinutes, format, isToday, isYesterday } from "date-fns";
 import { useChannelId } from "@/hooks/channels/use-channel-id";
-import { useWorkspaceId } from "@/hooks/workspaces/use-workspace-id";
 import { Button } from "@/components/ui/button";
 import { EditorValue } from "@/lib/types";
 import { useGetMessages } from "@/hooks/messages/use-get-messages";
 import { useGetMessage } from "@/hooks/messages/use-get-message";
-import { Message as MessageType } from "@/interfaces/message.interface";
-import { formatDateLabel } from "@/lib/utils";
-import { TIME_THRESHOLD } from "@/lib/constants";
 import Message from "./message";
 import { useGetMe } from "@/hooks/auth/use-get-me";
+import toast from "react-hot-toast";
+import { replyToThread } from "@/services/messages";
+import { useGetThreadReplies } from "@/hooks/messages/use-get-thread-replies";
+import { formatDateLabel } from "@/lib/utils";
+import { TIME_THRESHOLD } from "@/lib/constants";
 
 const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
 
@@ -25,7 +26,6 @@ interface ThreadProps {
 const Thread = ({ messageId, onClose }: ThreadProps) => {
   const { me } = useGetMe();
   const channelId = useChannelId();
-  const workspaceId = useWorkspaceId();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editorKey, setEditorKey] = useState<number>(0);
   const [isPending, setIsPending] = useState<boolean>(false);
@@ -35,29 +35,46 @@ const Thread = ({ messageId, onClose }: ThreadProps) => {
     channelId,
     messageId
   );
-  const { messages: results, isLoading: loadingMessages } = useGetMessages({
+  const { data: replies, isLoading: loadingReplies } = useGetThreadReplies({
     channelId,
+    messageId,
   });
 
-  const groupedMessages = results?.reduce((groups, message) => {
+  const groupedMessages = replies?.data?.reduce((groups, message) => {
     if (!message) return groups;
 
     const dateKey = format(new Date(message.createdAt), "yyyy-MM-dd");
+
     if (!groups[dateKey]) {
       groups[dateKey] = [];
     }
 
     groups[dateKey].unshift(message);
     return groups;
-  }, {} as Record<string, MessageType[]>);
+  }, {} as Record<string, typeof replies.data>);
 
-  const handleSubmit = ({ content }: EditorValue) => {
-    setIsPending(true);
-    console.log(content);
-    setIsPending(false);
+  const handleSubmit = async ({ content }: EditorValue) => {
+    try {
+      setIsPending(true);
+      editorRef?.current?.enable(false);
+
+      await replyToThread({
+        content,
+        channelId,
+        parentId: messageId,
+        userId: me?.id!,
+      });
+
+      setEditorKey((prev) => prev + 1);
+    } catch (error) {
+      toast.error("Failed to send message");
+    } finally {
+      setIsPending(false);
+      editorRef?.current?.enable(true);
+    }
   };
 
-  const isLoading = loadingMessage || loadingMessages;
+  const isLoading = loadingMessage || loadingReplies;
 
   if (isLoading)
     return (
@@ -68,7 +85,7 @@ const Thread = ({ messageId, onClose }: ThreadProps) => {
             <XIcon className="size-5 stroke-[1.5]" />
           </Button>
         </div>
-        {loadingMessage || loadingMessages ? (
+        {loadingMessage || loadingReplies ? (
           <div className="flex items-center justify-center h-full">
             <Loader className="size-5 animate-spin text-muted-foreground" />
           </div>
@@ -123,7 +140,7 @@ const Thread = ({ messageId, onClose }: ThreadProps) => {
                   authorName={message.user.displayName}
                   isAuthor={message.userId === me?.id}
                   // reactions={message.reactions}
-                  // body={message.body}
+                  body={message.content}
                   // image={message.image}
                   updatedAt={message.updatedAt}
                   createdAt={message.createdAt}
@@ -131,45 +148,17 @@ const Thread = ({ messageId, onClose }: ThreadProps) => {
                   setEditingId={setEditingId}
                   isCompact={isCompact ?? undefined}
                   hideThreadButton
-                  // threadCount={message.threadCount}
-                  // threadImage={message.threadImage}
-                  // threadName={message.threadName}
-                  // threadTimestamp={message.threadTimestamp}
-                  body={message.content}
+                  threadCount={message.threadMessagesCount}
+                  threadImage={message.user.avatar ?? undefined}
+                  threadName={message.user.displayName}
+                  threadTimestamp={message.createdAt}
                   edited={message.edited}
                 />
               );
             })}
           </div>
         ))}
-        {/* <div
-          className='h-1'
-          ref={(el) => {
-            if (el) {
-              const observer = new IntersectionObserver(
-                ([entry]) => {
-                  if (entry.isIntersecting && canLoadMore) {
-                    loadMore();
-                  }
-                },
-                {
-                  threshold: 1.0,
-                }
-              );
 
-              observer.observe(el);
-              return () => observer.disconnect();
-            }
-          }}
-        />
-        {isLoadingMore && (
-          <div className='text-center my-2 relative'>
-            <hr className='absolute top-1/2 left-0 right-0 border-t border-gray-300' />
-            <span className='relative inline-block bg-white px-4 py-1 rounded-full text-xs border border-gray-300 shadow-sm'>
-              <Loader className='size-5 animate-spin' />
-            </span>
-          </div>
-        )} */}
         <Message
           hideThreadButton
           memberId={message?.userId!}

@@ -3,7 +3,7 @@ import { getMessage } from "@/services/messages";
 
 export const useGetMessage = (channelId: string, messageId: string) => {
   const { data, isLoading } = useQuery({
-    queryKey: ["message", messageId],
+    queryKey: ["messageId", messageId],
     queryFn: () => getMessage(channelId, messageId),
     enabled: !!messageId,
     staleTime: Infinity,

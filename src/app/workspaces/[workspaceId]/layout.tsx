@@ -1,6 +1,6 @@
 "use client";
 
-import MessageThread from "@/components/messages/thread";
+import Thread from "@/components/messages/thread";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -17,7 +17,7 @@ interface WorkspaceIdLayoutProps {
 }
 
 const WorkspaceIdLayout = ({ children }: WorkspaceIdLayoutProps) => {
-  const { parentMessageId, onOpenMessage, onCloseMessage } = usePanel();
+  const { parentMessageId, onCloseMessage } = usePanel();
   const isThreadVisible = !!parentMessageId;
 
   return (
@@ -45,7 +45,7 @@ const WorkspaceIdLayout = ({ children }: WorkspaceIdLayoutProps) => {
               <ResizableHandle withHandle />
               <ResizablePanel minSize={20} defaultSize={29}>
                 {parentMessageId ? (
-                  <MessageThread
+                  <Thread
                     messageId={parentMessageId}
                     onClose={onCloseMessage}
                   />

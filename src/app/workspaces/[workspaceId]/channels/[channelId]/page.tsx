@@ -13,28 +13,30 @@ import { Message } from "@/interfaces/message.interface";
 const ChannelIdPage = () => {
   const channelId = useChannelId();
   const workspaceId = useWorkspaceId();
-  const { channel } = useGetChannel(workspaceId, channelId);
+  const { channel, isLoading: channelLoading } = useGetChannel(
+    workspaceId,
+    channelId
+  );
   const { messages } = useGetMessages({
     channelId,
   });
 
-  if (!channel)
+  if (channelLoading)
     return (
       <div className="h-full flex-1 flex gap-y-2 items-center justify-center">
-        <TriangleAlert className="size-5 text-muted-foreground" />
-        <span className="text-sm text-muted-foreground">Channel not found</span>
+        <Loader className="size-5 animate-spin" />
       </div>
     );
 
   return (
     <div className="flex flex-col h-full">
-      <Header title={channel.name} />
+      <Header title={channel?.name!} />
       <MessageList
-        channelName={channel.name}
-        channelCreationTime={channel.createdAt}
+        channelName={channel?.name}
+        channelCreationTime={channel?.createdAt}
         data={messages as Message[]}
       />
-      <ChatInput placeholder={`Message # ${channel.name}`} />
+      <ChatInput placeholder={`Message # ${channel?.name}`} />
     </div>
   );
 };
