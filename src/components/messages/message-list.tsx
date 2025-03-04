@@ -50,7 +50,7 @@ const MessageList = ({
       if (!groups[dateKey]) {
         groups[dateKey] = [];
       }
-      groups[dateKey].push(message);
+      groups[dateKey].unshift(message);
       return groups;
     },
     {} as Record<string, MessageType[]>
