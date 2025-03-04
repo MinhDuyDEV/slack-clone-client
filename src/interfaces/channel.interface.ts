@@ -7,6 +7,7 @@ export interface Channel {
   isDefault: boolean;
   sectionId: string;
   createdAt: string;
+  createdBy: string;
   updatedAt: string;
   workspaceId: string;
   userId: string;

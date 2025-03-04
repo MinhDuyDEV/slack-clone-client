@@ -25,7 +25,7 @@ interface MessageListProps {
   memberImage?: string;
   channelName?: string;
   channelCreationTime?: string;
-  variant?: "channel" | "thread" | "conversation";
+  type?: "private" | "public" | "direct";
   data: MessageType[];
 }
 
@@ -33,7 +33,7 @@ const MessageList = ({
   data: messages,
   memberImage,
   memberName,
-  variant = "channel",
+  type = "public",
   channelName,
   channelCreationTime,
 }: MessageListProps) => {
@@ -97,7 +97,7 @@ const MessageList = ({
                     isEditing={editingId === message.id}
                     setEditingId={setEditingId}
                     isCompact={isCompact ?? undefined}
-                    hideThreadButton={variant === "thread"}
+                    hideThreadButton={type === "private"}
                     threadCount={message.threadMessagesCount}
                     threadImage={message.user.avatar ?? undefined}
                     threadName={message.user.displayName}
@@ -109,13 +109,15 @@ const MessageList = ({
           </div>
         ))}
 
-      {variant === "channel" && channelName && channelCreationTime && (
-        <ChannelHero
-          channelName={channelName}
-          creationTime={channelCreationTime}
-        />
-      )}
-      {variant === "conversation" && (
+      {(type === "private" || type === "public") &&
+        channelName &&
+        channelCreationTime && (
+          <ChannelHero
+            channelName={channelName}
+            creationTime={channelCreationTime}
+          />
+        )}
+      {type === "direct" && (
         <ConversationHero name={memberName} image={memberImage} />
       )}
     </div>

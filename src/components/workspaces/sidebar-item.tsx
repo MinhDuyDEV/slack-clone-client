@@ -18,6 +18,8 @@ import {
 } from "@/components/ui/context-menu";
 import { useState } from "react";
 import { AddMemberModal } from "../channels/add-member-modal";
+import { useGetChannel } from "@/hooks/channels/use-get-channel";
+import { ViewChannelModal } from "../channels/view-details-channel-modal";
 interface SidebarItemProps {
   label: string;
   id: string;
@@ -43,6 +45,7 @@ const sidebarItemVariants = cva(
 const SidebarItem = ({ icon: Icon, id, label, variant }: SidebarItemProps) => {
   const workspaceId = useWorkspaceId();
   const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
+  const [isViewChannelModalOpen, setIsViewChannelModalOpen] = useState(false);
 
   return (
     <>
@@ -61,7 +64,9 @@ const SidebarItem = ({ icon: Icon, id, label, variant }: SidebarItemProps) => {
           </Button>
         </ContextMenuTrigger>
         <ContextMenuContent className="w-64">
-          <ContextMenuCheckboxItem>
+          <ContextMenuCheckboxItem
+            onClick={() => setIsViewChannelModalOpen(true)}
+          >
             View channel details
           </ContextMenuCheckboxItem>
           <ContextMenuCheckboxItem
@@ -130,6 +135,10 @@ const SidebarItem = ({ icon: Icon, id, label, variant }: SidebarItemProps) => {
       <AddMemberModal
         isOpen={isAddMemberModalOpen}
         onClose={() => setIsAddMemberModalOpen(false)}
+      />
+      <ViewChannelModal
+        isOpen={isViewChannelModalOpen}
+        onClose={() => setIsViewChannelModalOpen(false)}
       />
     </>
   );

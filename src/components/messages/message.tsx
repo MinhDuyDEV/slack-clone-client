@@ -10,7 +10,6 @@ import { useConfirm } from "@/hooks/common/use-confirm";
 import Hint from "@/components/hint";
 import Toolbar from "@/components/toolbar";
 import Thumbnail from "@/components/thumbnail";
-import Reactions from "@/components/reactions";
 import ThreadBar from "@/components/thread-bar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useDeleteMessage } from "@/hooks/messages/use-delete-message";
@@ -47,7 +46,6 @@ const Message = ({
   isAuthor,
   isEditing,
   setEditingId,
-  updatedAt,
   authorImage,
   authorName = "Member",
   hideThreadButton,
@@ -118,7 +116,6 @@ const Message = ({
                     (edited)
                   </span>
                 ) : null}
-                {/* <Reactions data={reactions || []} onChange={handleReaction} /> */}
                 <ThreadBar
                   count={threadCount}
                   image={threadImage}
@@ -136,7 +133,6 @@ const Message = ({
               handleEdit={() => setEditingId(id)}
               handleThread={() => onOpenMessage(id)}
               handleDelete={() => deleteMessage(id)}
-              // handleReaction={handleReaction}
               hideThreadButton={hideThreadButton}
             />
           )}
@@ -197,7 +193,6 @@ const Message = ({
                   </span>
                 ) : null}
               </div>
-              {/* <Reactions data={reactions || []} onChange={handleReaction} /> */}
               <ThreadBar
                 count={threadCount}
                 image={threadImage}
