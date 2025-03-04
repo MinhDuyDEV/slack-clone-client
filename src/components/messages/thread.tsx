@@ -31,7 +31,7 @@ const Thread = ({ messageId, onClose }: ThreadProps) => {
   const [isPending, setIsPending] = useState<boolean>(false);
   const editorRef = useRef<Quill | null>(null);
 
-  const { message, isLoading: loadingMessage } = useGetMessage(
+  const { message: parentMessage, isLoading: loadingMessage } = useGetMessage(
     channelId,
     messageId
   );
@@ -135,13 +135,10 @@ const Thread = ({ messageId, onClose }: ThreadProps) => {
                 <Message
                   key={message.id}
                   id={message.id}
-                  memberId={message.userId}
                   authorImage={message.user.avatar ?? undefined}
                   authorName={message.user.displayName}
                   isAuthor={message.userId === me?.id}
-                  // reactions={message.reactions}
                   body={message.content}
-                  // image={message.image}
                   updatedAt={message.updatedAt}
                   createdAt={message.createdAt}
                   isEditing={editingId === message.id}
@@ -153,6 +150,7 @@ const Thread = ({ messageId, onClose }: ThreadProps) => {
                   threadName={message.user.displayName}
                   threadTimestamp={message.createdAt}
                   edited={message.edited}
+                  parentMessageId={message.parentId}
                 />
               );
             })}
@@ -161,19 +159,17 @@ const Thread = ({ messageId, onClose }: ThreadProps) => {
 
         <Message
           hideThreadButton
-          memberId={message?.userId!}
-          authorImage={message?.user.avatar ?? undefined}
-          authorName={message?.user.displayName}
-          isAuthor={message?.userId === me?.id}
-          body={message?.content!}
-          // image={message.image}
-          createdAt={message?.createdAt!}
-          updatedAt={message?.updatedAt!}
-          id={message?.id!}
-          // reactions={message.reactions}
-          isEditing={editingId === message?.id}
+          authorImage={parentMessage?.user.avatar ?? undefined}
+          authorName={parentMessage?.user.displayName}
+          isAuthor={parentMessage?.userId === me?.id}
+          body={parentMessage?.content!}
+          createdAt={parentMessage?.createdAt!}
+          updatedAt={parentMessage?.updatedAt!}
+          id={parentMessage?.id!}
+          isEditing={editingId === parentMessage?.id}
           setEditingId={setEditingId}
-          edited={message?.edited}
+          edited={parentMessage?.edited}
+          parentMessageId={parentMessage?.parentId}
         />
       </div>
 

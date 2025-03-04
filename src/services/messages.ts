@@ -32,6 +32,27 @@ export const createMessage = async (
   return response.data;
 };
 
+export const editMessage = async (
+  channelId: string,
+  messageId: string,
+  content: string
+): Promise<Response<Message>> => {
+  const response = await axiosInstance.put(
+    `http://localhost:8000/api/channels/${channelId}/messages/${messageId}`,
+    { content }
+  );
+  return response.data;
+};
+
+export const deleteMessage = async (
+  channelId: string,
+  messageId: string
+): Promise<void> => {
+  await axiosInstance.delete(
+    `http://localhost:8000/api/channels/${channelId}/messages/${messageId}`
+  );
+};
+
 export const replyToThread = async (
   values: CreateMessageValues
 ): Promise<Response<Message>> => {

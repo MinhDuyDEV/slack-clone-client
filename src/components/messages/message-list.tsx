@@ -27,9 +27,6 @@ interface MessageListProps {
   channelCreationTime?: string;
   variant?: "channel" | "thread" | "conversation";
   data: MessageType[];
-  // loadMore: () => void;
-  // isLoadingMore: boolean;
-  // canLoadMore: boolean;
 }
 
 const MessageList = ({
@@ -43,38 +40,10 @@ const MessageList = ({
   const workspaceId = useWorkspaceId();
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  // Giả lập loading states
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [canLoadMore, setCanLoadMore] = useState(true);
-  const [page, setPage] = useState(1);
-
   const { me } = useGetMe();
   if (!me) return null;
 
-  // Phân trang tin nhắn
-  const messagesPerPage = 20;
-  const paginatedMessages = messages.slice(0, page * messagesPerPage);
-
-  // Hàm load thêm tin nhắn
-  const loadMore = () => {
-    if (isLoadingMore || !canLoadMore) return;
-
-    setIsLoadingMore(true);
-
-    // Giả lập API call
-    setTimeout(() => {
-      setPage((prev) => prev + 1);
-      setIsLoadingMore(false);
-
-      // Kiểm tra xem còn tin nhắn để load không
-      if (page * messagesPerPage >= messages.length) {
-        setCanLoadMore(false);
-      }
-    }, 1000);
-  };
-
-  // Nhóm tin nhắn theo ngày
-  const groupedMessages = paginatedMessages.reduce(
+  const groupedMessages = messages.reduce(
     (groups: any, message: MessageType) => {
       const date = message.createdAt;
       const dateKey = format(date, "yyyy-MM-dd");
@@ -84,7 +53,7 @@ const MessageList = ({
       groups[dateKey].push(message);
       return groups;
     },
-    {} as Record<string, typeof paginatedMessages>
+    {} as Record<string, MessageType[]>
   );
 
   return (
@@ -113,14 +82,11 @@ const MessageList = ({
                 <Message
                   key={message.id}
                   id={message.id}
-                  memberId={message.userId}
-                  authorImage={message.userId}
+                  authorImage={message.user.avatar ?? undefined}
                   authorName={message.user.displayName}
                   isAuthor={message.userId === me.id}
-                  reactions={[]}
                   edited={message.edited}
                   body={message.content}
-                  // image={null}
                   updatedAt={message.updatedAt}
                   createdAt={message.createdAt}
                   isEditing={editingId === message.id}

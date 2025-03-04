@@ -11,7 +11,7 @@ export const useGetThreadReplies = ({
   messageId,
 }: UseGetThreadRepliesProps) => {
   const { data, isLoading } = useQuery({
-    queryKey: ["threadReplies", messageId],
+    queryKey: ["thread-replies", channelId, messageId],
     queryFn: () => getThreadReplies(channelId, messageId),
     enabled: !!messageId,
     staleTime: Infinity,
