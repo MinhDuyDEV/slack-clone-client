@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import InviteModal from "@/components/workspaces/invite-modal";
 import PreferencesModal from "@/components/workspaces/preferences-modal";
 import { Workspace } from "@/interfaces/workspace.interface";
+import { AddMemberModal } from "./add-member-workspace-modal";
 
 interface WorkspaceHeaderProps {
   workspace: Workspace;
@@ -19,16 +20,13 @@ interface WorkspaceHeaderProps {
 
 const WorkspaceHeader = ({ workspace }: WorkspaceHeaderProps) => {
   const [preferencesOpen, setPreferencesOpen] = useState<boolean>(false);
-  const [inviteOpen, setInviteOpen] = useState<boolean>(false);
-
+  const [inviteModalOpen, setInviteModalOpen] = useState<boolean>(false);
   return (
     <>
-      {/* <InviteModal
-        open={inviteOpen}
-        setOpen={setInviteOpen}
-        name={workspace.name}
-        joinCode={workspace.joinCode}
-      /> */}
+      <AddMemberModal
+        isOpen={inviteModalOpen}
+        onClose={() => setInviteModalOpen(false)}
+      />
       <PreferencesModal
         open={preferencesOpen}
         setOpen={setPreferencesOpen}
@@ -62,7 +60,7 @@ const WorkspaceHeader = ({ workspace }: WorkspaceHeaderProps) => {
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="cursor-pointer py-2"
-              onClick={() => setInviteOpen(true)}
+              onClick={() => setInviteModalOpen(true)}
             >
               <p className="truncate">
                 Invite people to{" "}

@@ -10,16 +10,14 @@ import {
   ContextMenuCheckboxItem,
   ContextMenuContent,
   ContextMenuItem,
-  ContextMenuLabel,
-  ContextMenuRadioGroup,
-  ContextMenuRadioItem,
   ContextMenuSeparator,
-  ContextMenuShortcut,
   ContextMenuSub,
   ContextMenuSubContent,
   ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
+import { useState } from "react";
+import { AddMemberModal } from "../channels/add-member-modal";
 interface SidebarItemProps {
   label: string;
   id: string;
@@ -44,78 +42,96 @@ const sidebarItemVariants = cva(
 
 const SidebarItem = ({ icon: Icon, id, label, variant }: SidebarItemProps) => {
   const workspaceId = useWorkspaceId();
+  const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
 
   return (
-    <ContextMenu>
-      <ContextMenuTrigger asChild>
-        <Button
-          asChild
-          variant="transparent"
-          size="sm"
-          className={cn(sidebarItemVariants({ variant }))}
-        >
-          <Link href={`/workspaces/${workspaceId}/channels/${id}`}>
-            <Icon className="size-3.5 mr-1 shrink-0" />
-            <span className="text-sm truncate">{label}</span>
-          </Link>
-        </Button>
-      </ContextMenuTrigger>
-      <ContextMenuContent className="w-64">
-        <ContextMenuCheckboxItem>View channel details</ContextMenuCheckboxItem>
-        <ContextMenuSub>
-          <ContextMenuSubTrigger inset>Copy</ContextMenuSubTrigger>
-          <ContextMenuSubContent className="w-48">
-            <ContextMenuItem>Copy name</ContextMenuItem>
-            <ContextMenuItem>Copy link</ContextMenuItem>
-            <ContextMenuItem>Copy huddle link</ContextMenuItem>
-          </ContextMenuSubContent>
-        </ContextMenuSub>
-        <ContextMenuSeparator />
-        <ContextMenuCheckboxItem>Mute channel</ContextMenuCheckboxItem>
-        <ContextMenuCheckboxItem>Change notifications</ContextMenuCheckboxItem>
-        <ContextMenuSeparator />
-        <ContextMenuSub>
-          <ContextMenuSubTrigger inset>Move channel</ContextMenuSubTrigger>
-          <ContextMenuSubContent className="w-64">
-            <ContextMenuCheckboxItem disabled>
-              Move to ...
-            </ContextMenuCheckboxItem>
-            <ContextMenuCheckboxItem
-              checked={false}
-              className="flex items-center"
-            >
-              <StarIcon className="size-4 mr-1" />
-              Unstarrsdfsdf
-            </ContextMenuCheckboxItem>
-            <ContextMenuCheckboxItem
-              checked={false}
-              className="flex items-center"
-            >
-              <StarIcon className="size-4 mr-1" />
-              Unstarredsdf
-            </ContextMenuCheckboxItem>
-            <ContextMenuCheckboxItem
-              checked
-              className="flex items-center text-blue-500"
-            >
-              <StarIcon className="size-4 mr-1" />
-              Starred
-            </ContextMenuCheckboxItem>
-            <ContextMenuSeparator />
-            <ContextMenuCheckboxItem>
-              Move to new section
-            </ContextMenuCheckboxItem>
-            <ContextMenuCheckboxItem>Remove from ...</ContextMenuCheckboxItem>
-            <ContextMenuSeparator />
-            <ContextMenuCheckboxItem>Edit all sections</ContextMenuCheckboxItem>
-          </ContextMenuSubContent>
-        </ContextMenuSub>
-        <ContextMenuSeparator />
-        <ContextMenuCheckboxItem className="text-red-500">
-          Leave channel
-        </ContextMenuCheckboxItem>
-      </ContextMenuContent>
-    </ContextMenu>
+    <>
+      <ContextMenu>
+        <ContextMenuTrigger asChild>
+          <Button
+            asChild
+            variant="transparent"
+            size="sm"
+            className={cn(sidebarItemVariants({ variant }))}
+          >
+            <Link href={`/workspaces/${workspaceId}/channels/${id}`}>
+              <Icon className="size-3.5 mr-1 shrink-0" />
+              <span className="text-sm truncate">{label}</span>
+            </Link>
+          </Button>
+        </ContextMenuTrigger>
+        <ContextMenuContent className="w-64">
+          <ContextMenuCheckboxItem>
+            View channel details
+          </ContextMenuCheckboxItem>
+          <ContextMenuCheckboxItem
+            onClick={() => setIsAddMemberModalOpen(true)}
+          >
+            Add member ...
+          </ContextMenuCheckboxItem>
+          <ContextMenuSub>
+            <ContextMenuSubTrigger inset>Copy</ContextMenuSubTrigger>
+            <ContextMenuSubContent className="w-48">
+              <ContextMenuItem>Copy name</ContextMenuItem>
+              <ContextMenuItem>Copy link</ContextMenuItem>
+              <ContextMenuItem>Copy huddle link</ContextMenuItem>
+            </ContextMenuSubContent>
+          </ContextMenuSub>
+          <ContextMenuSeparator />
+          <ContextMenuCheckboxItem>Mute channel</ContextMenuCheckboxItem>
+          <ContextMenuCheckboxItem>
+            Change notifications
+          </ContextMenuCheckboxItem>
+          <ContextMenuSeparator />
+          <ContextMenuSub>
+            <ContextMenuSubTrigger inset>Move channel</ContextMenuSubTrigger>
+            <ContextMenuSubContent className="w-64">
+              <ContextMenuCheckboxItem disabled>
+                Move to ...
+              </ContextMenuCheckboxItem>
+              <ContextMenuCheckboxItem
+                checked={false}
+                className="flex items-center"
+              >
+                <StarIcon className="size-4 mr-1" />
+                Unstarrsdfsdf
+              </ContextMenuCheckboxItem>
+              <ContextMenuCheckboxItem
+                checked={false}
+                className="flex items-center"
+              >
+                <StarIcon className="size-4 mr-1" />
+                Unstarredsdf
+              </ContextMenuCheckboxItem>
+              <ContextMenuCheckboxItem
+                checked
+                className="flex items-center text-blue-500"
+              >
+                <StarIcon className="size-4 mr-1" />
+                Starred
+              </ContextMenuCheckboxItem>
+              <ContextMenuSeparator />
+              <ContextMenuCheckboxItem>
+                Move to new section
+              </ContextMenuCheckboxItem>
+              <ContextMenuCheckboxItem>Remove from ...</ContextMenuCheckboxItem>
+              <ContextMenuSeparator />
+              <ContextMenuCheckboxItem>
+                Edit all sections
+              </ContextMenuCheckboxItem>
+            </ContextMenuSubContent>
+          </ContextMenuSub>
+          <ContextMenuSeparator />
+          <ContextMenuCheckboxItem className="text-red-500">
+            Leave channel
+          </ContextMenuCheckboxItem>
+        </ContextMenuContent>
+      </ContextMenu>
+      <AddMemberModal
+        isOpen={isAddMemberModalOpen}
+        onClose={() => setIsAddMemberModalOpen(false)}
+      />
+    </>
   );
 };
 

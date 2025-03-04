@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { useGetWorkspaces } from "@/hooks/workspaces/use-get-workspaces";
 import { handleLogout } from "@/services/auth";
 import { CreateWorkspaceModal } from "@/components/workspaces/create-workspace-modal";
@@ -12,12 +11,14 @@ import { useGetMe } from "@/hooks/auth/use-get-me";
 import { Loader } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Workspace } from "@/interfaces/workspace.interface";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function Home() {
   const { me } = useGetMe();
   const { workspaces, isLoading } = useGetWorkspaces();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   if (!me) return null;
   if (!workspaces) return null;
@@ -109,7 +110,10 @@ export default function Home() {
             Not seeing your workspace?{" "}
             <Link
               href="/login"
-              onClick={() => handleLogout()}
+              onClick={() => {
+                handleLogout();
+                queryClient.clear();
+              }}
               className="text-cyan-400 hover:underline inline-flex items-center"
             >
               Try using a different email

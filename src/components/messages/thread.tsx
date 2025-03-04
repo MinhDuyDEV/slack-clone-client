@@ -15,6 +15,7 @@ import { replyToThread } from "@/services/messages";
 import { useGetThreadReplies } from "@/hooks/messages/use-get-thread-replies";
 import { formatDateLabel } from "@/lib/utils";
 import { TIME_THRESHOLD } from "@/lib/constants";
+import { useCreateThreadMessage } from "@/hooks/messages/use-create-thread-message";
 
 const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
 
@@ -39,6 +40,12 @@ const Thread = ({ messageId, onClose }: ThreadProps) => {
     channelId,
     messageId,
   });
+  const { mutate: createThreadMessage, isPending: isCreatingMessage } =
+    useCreateThreadMessage({
+      channelId,
+      parentId: messageId,
+      userId: me?.id,
+    });
 
   const groupedMessages = replies?.data?.reduce((groups, message) => {
     if (!message) return groups;
@@ -58,12 +65,7 @@ const Thread = ({ messageId, onClose }: ThreadProps) => {
       setIsPending(true);
       editorRef?.current?.enable(false);
 
-      await replyToThread({
-        content,
-        channelId,
-        parentId: messageId,
-        userId: me?.id!,
-      });
+      await createThreadMessage({ content });
 
       setEditorKey((prev) => prev + 1);
     } catch (error) {

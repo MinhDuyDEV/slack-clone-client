@@ -43,7 +43,7 @@ const MessageList = ({
   const { me } = useGetMe();
   if (!me) return null;
 
-  const groupedMessages = messages.reduce(
+  const groupedMessages = messages?.reduce(
     (groups: any, message: MessageType) => {
       const date = message.createdAt;
       const dateKey = format(date, "yyyy-MM-dd");

@@ -4,10 +4,9 @@ import dynamic from "next/dynamic";
 import { useRef, useState } from "react";
 
 import { useChannelId } from "@/hooks/channels/use-channel-id";
-import { useWorkspaceId } from "@/hooks/workspaces/use-workspace-id";
-import { createMessage } from "@/services/messages";
 import { CreateMessageValues } from "@/lib/types";
 import { useGetMe } from "@/hooks/auth/use-get-me";
+import { useCreateMessage } from "@/hooks/messages/use-create-message";
 
 const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
 
@@ -22,18 +21,18 @@ const ChatInput = ({ placeholder }: ChatInputProps) => {
   const channelId = useChannelId();
   const editorRef = useRef<Quill | null>(null);
 
+  const { mutate: createMessage, isPending: isCreatingMessage } =
+    useCreateMessage({
+      channelId,
+      userId: me?.id,
+    });
+
   const handleSubmit = async ({ content }: { content: string }) => {
     try {
       setIsPending(true);
       editorRef?.current?.enable(false);
 
-      const values: CreateMessageValues = {
-        channelId,
-        content,
-        userId: me.id,
-      };
-
-      const message = await createMessage(values);
+      await createMessage({ content });
 
       setEditorKey((prev) => prev + 1);
     } catch {

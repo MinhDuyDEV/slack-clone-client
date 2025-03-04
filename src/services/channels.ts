@@ -32,3 +32,15 @@ export const createChannel = async (
   );
   return response.data;
 };
+
+export const addChannelMember = async (
+  workspaceId: string,
+  channelId: string,
+  body: { email: string }
+) => {
+  const response = await axiosInstance.post(
+    `http://localhost:8000/api/workspaces/${workspaceId}/channels/${channelId}/members`,
+    body
+  );
+  return response.data;
+};

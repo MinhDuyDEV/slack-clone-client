@@ -27,3 +27,19 @@ export const createWorkspace = async (body: {
   );
   return response.data;
 };
+
+interface AddWorkspaceMemberBody {
+  email: string;
+  role?: "OWNER" | "ADMIN" | "MEMBER";
+}
+
+export const addWorkspaceMember = async (
+  workspaceId: string,
+  body: AddWorkspaceMemberBody
+): Promise<Response<any>> => {
+  const response = await axiosInstance.post(
+    `http://localhost:8000/api/workspaces/${workspaceId}/members`,
+    body
+  );
+  return response.data;
+};

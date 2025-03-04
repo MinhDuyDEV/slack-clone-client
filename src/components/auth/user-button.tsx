@@ -10,9 +10,10 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { handleLogout } from "@/services/auth";
 import { useRouter } from "next/navigation";
-
+import { useQueryClient } from "@tanstack/react-query";
 const UserButton = () => {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   return (
     <DropdownMenu modal={false}>
@@ -26,6 +27,7 @@ const UserButton = () => {
           onClick={() => {
             handleLogout();
             router.push("/login");
+            queryClient.clear();
           }}
           className="h-10"
         >
