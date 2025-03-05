@@ -25,17 +25,20 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   async (error) => {
-    if (error.response?.status === 401) {
+    if (error.response?.data?.error?.statusCode === 410) {
       location.href = "/login";
     }
-
+    console.log("error in instance", error);
     const originalRequest = error.config;
-    if (error.response?.status === 410 && !originalRequest._retry) {
+    if (
+      error.response?.data?.error?.statusCode === 401 &&
+      !originalRequest._retry
+    ) {
       originalRequest._retry = true;
       if (!refreshTokenPromise) {
         refreshTokenPromise = refreshToken()
           .then((response) => {
-            return response.data?.accessToken;
+            return response.data?.data?.accessToken;
           })
           .catch(() => {
             location.href = "/login";
@@ -48,9 +51,6 @@ axiosInstance.interceptors.response.use(
         return axiosInstance(originalRequest);
       });
     }
-    // if (error.response?.status !== 410) {
-    //   location.href = "/login";
-    // }
     return Promise.reject(error);
   }
 );

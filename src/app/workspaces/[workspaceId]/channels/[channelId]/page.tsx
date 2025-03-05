@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader, TriangleAlert } from "lucide-react";
+import { Loader } from "lucide-react";
 import MessageList from "@/components/messages/message-list";
 import { useChannelId } from "@/hooks/channels/use-channel-id";
 import Header from "@/components/channels/header";
@@ -8,20 +8,26 @@ import ChatInput from "@/components/channels/chat-input";
 import { useGetChannel } from "@/hooks/channels/use-get-channel";
 import { useWorkspaceId } from "@/hooks/workspaces/use-workspace-id";
 import { useGetMessages } from "@/hooks/messages/use-get-messages";
-import { Message } from "@/interfaces/message.interface";
+import { useChannelSocket } from "@/hooks/sockets/use-socket";
 
 const ChannelIdPage = () => {
   const channelId = useChannelId();
   const workspaceId = useWorkspaceId();
+
+  // Connect to socket
+  useChannelSocket(channelId);
+
   const { channel, isLoading: channelLoading } = useGetChannel(
     workspaceId,
     channelId
   );
-  const { messages } = useGetMessages({
+  const { messages, isLoading: messagesLoading } = useGetMessages({
     channelId,
   });
 
-  if (channelLoading)
+  console.log("Page messages:", messages);
+
+  if (channelLoading || messagesLoading)
     return (
       <div className="h-full flex-1 flex gap-y-2 items-center justify-center">
         <Loader className="size-5 animate-spin" />
@@ -34,7 +40,8 @@ const ChannelIdPage = () => {
       <MessageList
         channelName={channel?.name}
         channelCreationTime={channel?.createdAt}
-        data={messages as Message[]}
+        data={messages || []}
+        type="public"
       />
       <ChatInput placeholder={`Message # ${channel?.name}`} />
     </div>

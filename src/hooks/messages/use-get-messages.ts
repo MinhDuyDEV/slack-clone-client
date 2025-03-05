@@ -13,5 +13,7 @@ export const useGetMessages = ({ channelId }: UseGetMessagesProps) => {
     staleTime: Infinity,
   });
 
-  return { messages: data?.data, isLoading };
+  console.log("useGetMessages data:", data);
+
+  return { messages: data?.data || [], isLoading };
 };

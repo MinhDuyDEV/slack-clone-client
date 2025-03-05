@@ -109,13 +109,15 @@ const Message = ({
               </div>
             ) : (
               <div className="flex flex-col w-full">
-                <Rerender value={body} />
                 {/* <Thumbnail url={image} /> */}
-                {edited !== null ? (
-                  <span className="text-xs text-muted-foreground">
-                    (edited)
-                  </span>
-                ) : null}
+                <div className="flex items-center gap-1">
+                  <Rerender value={body} />
+                  {edited !== null ? (
+                    <span className="text-xs text-muted-foreground">
+                      (edited)
+                    </span>
+                  ) : null}
+                </div>
                 <ThreadBar
                   count={threadCount}
                   image={threadImage}

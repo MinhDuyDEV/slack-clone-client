@@ -43,9 +43,16 @@ const MessageList = ({
   const { me } = useGetMe();
   if (!me) return null;
 
-  const groupedMessages = messages?.reduce(
-    (groups: any, message: MessageType) => {
-      const date = message.createdAt;
+  console.log("MessageList received messages:", messages);
+
+  // Sort messages by date in ascending order (oldest first)
+  const sortedMessages = [...messages].sort(
+    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+  );
+
+  const groupedMessages = sortedMessages.reduce(
+    (groups: Record<string, MessageType[]>, message: MessageType) => {
+      const date = new Date(message.createdAt);
       const dateKey = format(date, "yyyy-MM-dd");
       if (!groups[dateKey]) {
         groups[dateKey] = [];
@@ -53,16 +60,19 @@ const MessageList = ({
       groups[dateKey].push(message);
       return groups;
     },
-    {} as Record<string, MessageType[]>
+    {}
   );
+
+  console.log("Grouped messages:", groupedMessages);
 
   return (
     <div className="flex-1 flex flex-col-reverse pb-4 overflow-y-auto messages-scrollbar">
-      {Object.entries(groupedMessages || {})
+      {Object.entries(groupedMessages)
         .sort(
           ([dateA], [dateB]) =>
-            new Date(dateB).getTime() - new Date(dateA).getTime()
+            new Date(dateA).getTime() - new Date(dateB).getTime()
         )
+        .reverse()
         .map(([dateKey, messages]) => (
           <div key={dateKey}>
             <div className="text-center my-2 relative">
@@ -71,41 +81,39 @@ const MessageList = ({
                 {formatDateLabel(dateKey)}
               </span>
             </div>
-            {(messages as MessageType[]).map(
-              (message: MessageType, index: number) => {
-                if (!message) return null;
-                const prevMessage = (messages as MessageType[])[index - 1];
-                const isCompact =
-                  prevMessage &&
-                  message.userId === prevMessage.userId &&
-                  differenceInMinutes(
-                    new Date(message.createdAt),
-                    new Date(prevMessage.createdAt)
-                  ) < TIME_THRESHOLD;
+            {messages.map((message: MessageType, index: number) => {
+              if (!message) return null;
+              const prevMessage = messages[index - 1];
+              const isCompact =
+                prevMessage &&
+                message.userId === prevMessage.userId &&
+                differenceInMinutes(
+                  new Date(message.createdAt),
+                  new Date(prevMessage.createdAt)
+                ) < TIME_THRESHOLD;
 
-                return (
-                  <Message
-                    key={message.id}
-                    id={message.id}
-                    authorImage={message.user.avatar ?? undefined}
-                    authorName={message.user.displayName}
-                    isAuthor={message.userId === me.id}
-                    edited={message.edited}
-                    body={message.content}
-                    updatedAt={message.updatedAt}
-                    createdAt={message.createdAt}
-                    isEditing={editingId === message.id}
-                    setEditingId={setEditingId}
-                    isCompact={isCompact ?? undefined}
-                    hideThreadButton={type === "private"}
-                    threadCount={message.threadMessagesCount}
-                    threadImage={message.user.avatar ?? undefined}
-                    threadName={message.user.displayName}
-                    threadTimestamp={message.createdAt}
-                  />
-                );
-              }
-            )}
+              return (
+                <Message
+                  key={message.id}
+                  id={message.id}
+                  authorImage={message.user?.avatar ?? undefined}
+                  authorName={message.user?.displayName}
+                  isAuthor={message.userId === me.id}
+                  edited={message.edited}
+                  body={message.content}
+                  updatedAt={message.updatedAt}
+                  createdAt={message.createdAt}
+                  isEditing={editingId === message.id}
+                  setEditingId={setEditingId}
+                  isCompact={isCompact ?? undefined}
+                  hideThreadButton={type === "private"}
+                  threadCount={message.threadMessagesCount}
+                  threadImage={message.user?.avatar ?? undefined}
+                  threadName={message.user?.displayName}
+                  threadTimestamp={message.createdAt}
+                />
+              );
+            })}
           </div>
         ))}
 
