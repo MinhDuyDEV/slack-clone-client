@@ -1,16 +1,7 @@
 import { useState } from "react";
-import { Loader } from "lucide-react";
 import { differenceInMinutes, format } from "date-fns";
 
 import { useWorkspaceId } from "@/hooks/workspaces/use-workspace-id";
-import {
-  messages,
-  members,
-  channels,
-  getThreadCount,
-  getThreadImage,
-  getThreadName,
-} from "@/lib/seed-data";
 
 import ChannelHero from "@/components/channel-hero";
 import ConversationHero from "@/components/conversation-hero";
