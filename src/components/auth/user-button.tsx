@@ -11,15 +11,18 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { handleLogout } from "@/services/auth";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
+import { useGetMe } from "@/hooks/auth/use-get-me";
 const UserButton = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
-
+  const { me } = useGetMe();
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger className="outline-none relative">
         <Avatar className="rounded-md size-10 hover:opacity-75 transition">
-          <AvatarFallback className="rounded-md bg-sky-500 text-white"></AvatarFallback>
+          <AvatarFallback className="rounded-md bg-sky-500 text-white">
+            {me?.displayName.charAt(0).toUpperCase()}
+          </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="center" side="right" className="w-60">
