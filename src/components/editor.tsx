@@ -89,7 +89,7 @@ const Editor = ({
                 if (isEmpty) return;
 
                 const body = JSON.stringify(quill.getContents());
-                submitRef.current({ content: body });
+                submitRef.current({ image: addedImage, content: body });
               },
             },
             shift_enter: {
@@ -221,6 +221,7 @@ const Editor = ({
                 onClick={() => {
                   onSubmit({
                     content: JSON.stringify(quillRef.current?.getContents()),
+                    image,
                   });
                 }}
                 size="sm"
@@ -240,6 +241,7 @@ const Editor = ({
               onClick={() => {
                 onSubmit({
                   content: JSON.stringify(quillRef.current?.getContents()),
+                  image,
                 });
               }}
               size="iconSm"

@@ -7,6 +7,7 @@ export interface Message {
   channelId: string;
   userId: string;
   parentId: string | null;
+  attachments: Attachment[];
   isThreadParent: boolean;
   threadMessagesCount: number;
   lastThreadMessageAt: string;

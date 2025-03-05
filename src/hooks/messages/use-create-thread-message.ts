@@ -18,12 +18,13 @@ export const useCreateThreadMessage = ({
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (values: { content: string }) =>
+    mutationFn: (values: { content: string; imageId?: string }) =>
       replyToThread({
         content: values.content,
         channelId,
         parentId,
         userId,
+        imageId: values.imageId,
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["messages", channelId] });

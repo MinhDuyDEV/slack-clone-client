@@ -25,6 +25,7 @@ interface MessageProps {
   authorName?: string;
   isAuthor: boolean;
   body: string;
+  image?: string;
   createdAt: string;
   updatedAt: string;
   edited: any;
@@ -42,6 +43,7 @@ interface MessageProps {
 const Message = ({
   id,
   body,
+  image,
   createdAt,
   isAuthor,
   isEditing,
@@ -109,7 +111,7 @@ const Message = ({
               </div>
             ) : (
               <div className="flex flex-col w-full">
-                {/* <Thumbnail url={image} /> */}
+                <Thumbnail url={image} />
                 <div className="flex items-center gap-1">
                   <Rerender value={body} />
                   {edited !== null ? (
@@ -156,8 +158,14 @@ const Message = ({
         <div className="flex items-start gap-2">
           <button>
             <Avatar>
-              <AvatarImage alt={authorImage} src={authorImage} />
-              <AvatarFallback>{avatarFallback}</AvatarFallback>
+              <AvatarImage
+                alt={authorImage}
+                src={authorImage}
+                className="rounded-md size-10"
+              />
+              <AvatarFallback className="rounded-md size-10">
+                {avatarFallback}
+              </AvatarFallback>
             </Avatar>
           </button>
           {isEditing ? (
@@ -186,7 +194,7 @@ const Message = ({
                   </button>
                 </Hint>
               </div>
-              {/* <Thumbnail url={image} /> */}
+              <Thumbnail url={image} />
               <div className="flex items-center gap-1">
                 <Rerender value={body} />
                 {edited !== null ? (

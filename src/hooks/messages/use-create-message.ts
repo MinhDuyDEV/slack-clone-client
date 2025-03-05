@@ -17,8 +17,13 @@ export const useCreateMessage = ({
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (values: { content: string }) =>
-      createMessage({ content: values.content, channelId, userId }),
+    mutationFn: (values: { content: string; imageId: string }) =>
+      createMessage({
+        content: values.content,
+        channelId,
+        userId,
+        imageId: values.imageId,
+      }),
     onSuccess: () => {
       // Invalidate channel messages
       queryClient.invalidateQueries({ queryKey: ["messages", channelId] });

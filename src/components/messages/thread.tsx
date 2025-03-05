@@ -16,6 +16,7 @@ import { useGetThreadReplies } from "@/hooks/messages/use-get-thread-replies";
 import { formatDateLabel } from "@/lib/utils";
 import { TIME_THRESHOLD } from "@/lib/constants";
 import { useCreateThreadMessage } from "@/hooks/messages/use-create-thread-message";
+import { uploadMultipleFiles } from "@/services/upload";
 
 const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
 
@@ -36,6 +37,7 @@ const Thread = ({ messageId, onClose }: ThreadProps) => {
     channelId,
     messageId
   );
+  console.log("parentMessage", parentMessage);
   const { data: replies, isLoading: loadingReplies } = useGetThreadReplies({
     channelId,
     messageId,
@@ -60,12 +62,24 @@ const Thread = ({ messageId, onClose }: ThreadProps) => {
     return groups;
   }, {} as Record<string, typeof replies.data>);
 
-  const handleSubmit = async ({ content }: EditorValue) => {
+  const handleSubmit = async ({ content, image }: EditorValue) => {
     try {
       setIsPending(true);
       editorRef?.current?.enable(false);
+      const values: any = {
+        content,
+        image,
+      };
+      if (image instanceof File) {
+        const response = await uploadMultipleFiles({
+          files: [image],
+        });
 
-      await createThreadMessage({ content });
+        console.log("response in uploads", response);
+
+        values.image = response?.data[0].id;
+      }
+      await createThreadMessage({ content, imageId: values.image });
 
       setEditorKey((prev) => prev + 1);
     } catch (error) {
@@ -138,6 +152,7 @@ const Thread = ({ messageId, onClose }: ThreadProps) => {
                     new Date(message.createdAt),
                     new Date(prevMessage.createdAt)
                   ) < TIME_THRESHOLD;
+                console.log("messages", messages);
                 return (
                   <Message
                     key={message.id}
@@ -146,6 +161,7 @@ const Thread = ({ messageId, onClose }: ThreadProps) => {
                     authorName={message.user.displayName}
                     isAuthor={message.userId === me?.id}
                     body={message.content}
+                    image={message.attachments?.[0]?.url}
                     updatedAt={message.updatedAt}
                     createdAt={message.createdAt}
                     isEditing={editingId === message.id}
@@ -170,6 +186,7 @@ const Thread = ({ messageId, onClose }: ThreadProps) => {
           authorName={parentMessage?.user.displayName}
           isAuthor={parentMessage?.userId === me?.id}
           body={parentMessage?.content!}
+          image={parentMessage?.attachments?.[0]?.url}
           createdAt={parentMessage?.createdAt!}
           updatedAt={parentMessage?.updatedAt!}
           id={parentMessage?.id!}

@@ -4,9 +4,10 @@ import dynamic from "next/dynamic";
 import { useRef, useState } from "react";
 
 import { useChannelId } from "@/hooks/channels/use-channel-id";
-import { CreateMessageValues } from "@/lib/types";
+import { CreateMessageValues, EditorValue } from "@/lib/types";
 import { useGetMe } from "@/hooks/auth/use-get-me";
 import { useCreateMessage } from "@/hooks/messages/use-create-message";
+import { uploadMultipleFiles } from "@/services/upload";
 
 const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
 
@@ -27,12 +28,26 @@ const ChatInput = ({ placeholder }: ChatInputProps) => {
       userId: me?.id,
     });
 
-  const handleSubmit = async ({ content }: { content: string }) => {
+  const handleSubmit = async ({ content, image }: EditorValue) => {
     try {
       setIsPending(true);
       editorRef?.current?.enable(false);
 
-      await createMessage({ content });
+      const values: any = {
+        content,
+        image,
+      };
+      if (image instanceof File) {
+        const response = await uploadMultipleFiles({
+          files: [image],
+        });
+
+        console.log("response in uploads", response);
+
+        values.image = response?.data[0].id;
+      }
+      console.log("values", { content, imageId: values.image });
+      await createMessage({ content, imageId: values.image });
 
       setEditorKey((prev) => prev + 1);
     } catch {

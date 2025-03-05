@@ -87,6 +87,7 @@ const MessageList = ({
                 <Message
                   key={message.id}
                   id={message.id}
+                  image={message.attachments?.[0]?.url}
                   authorImage={message.user?.avatar ?? undefined}
                   authorName={message.user?.displayName}
                   isAuthor={message.userId === me.id}

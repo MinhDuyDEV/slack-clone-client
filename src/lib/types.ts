@@ -12,8 +12,10 @@ export type CreateMessageValues = {
   channelId: string;
   parentId?: string;
   userId: string;
+  imageId?: string;
 };
 
 export type EditorValue = {
   content: string;
+  image: File | null | string;
 };
