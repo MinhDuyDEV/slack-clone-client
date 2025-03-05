@@ -38,7 +38,7 @@ axiosInstance.interceptors.response.use(
       if (!refreshTokenPromise) {
         refreshTokenPromise = refreshToken()
           .then((response) => {
-            return response.data?.data?.accessToken;
+            // return response.data?.data?.accessToken;
           })
           .catch(() => {
             location.href = "/login";
